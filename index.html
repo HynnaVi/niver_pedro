@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Hack</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Courier New", monospace;
+    }
+
+    body {
+      background: #020403;
+      color: #00ff88;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+    }
+
+    .screen {
+      width: 92%;
+      max-width: 900px;
+      margin: 35px auto;
+      padding: 25px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #00ff88;
+      box-shadow: 0 0 25px #00ff88;
+      border-radius: 12px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      text-shadow: 0 0 12px #00ff88;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(1.7rem, 6vw, 3rem);
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      25% { transform: translate(-2px, 1px); }
+      50% { transform: translate(2px, -1px); }
+      75% { transform: translate(-1px, -2px); }
+    }
+
+    .terminal {
+      border: 1px solid #00ff88;
+      background: #010101;
+      padding: 18px;
+      border-radius: 8px;
+      min-height: 180px;
+      line-height: 1.6;
+      white-space: pre-line;
+      box-shadow: inset 0 0 18px #003d25;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      background: black;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      border-radius: 6px;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00ff88;
+      color: black;
+      box-shadow: 0 0 20px #00ff88;
+    }
+
+    .progress-box {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .progress {
+      height: 22px;
+      border: 1px solid #00ff88;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: #00ff88;
+      box-shadow: 0 0 15px #00ff88;
+      transition: 0.2s;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      color: #d7ffe9;
+      text-align: center;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin: 25px 0;
+    }
+
+    .photo-area {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .photo-card {
+      border: 1px dashed #00ff88;
+      min-height: 230px;
+      border-radius: 12px;
+      background: rgba(0, 255, 136, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      color: #8cffc4;
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .big {
+      font-size: clamp(1.5rem, 7vw, 3.2rem);
+      color: #00ff88;
+      text-align: center;
+      text-shadow: 0 0 20px #00ff88;
+      margin: 30px 0;
+    }
+
+    .heart {
+      color: #ff4b91;
+      text-shadow: 0 0 12px #ff4b91;
+    }
+
+    @media (max-width: 600px) {
+      .screen {
+        margin: 20px auto;
+        padding: 18px;
+      }
+
+      .terminal {
+        font-size: 0.9rem;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="matrix"></canvas>
+
+  <section class="screen" id="loginScreen">
+    <h1>SECURE BIRTHDAY SYSTEM</h1>
+
+    <div class="terminal" id="terminal"></div>
+
+    <input type="password" id="password" placeholder="Digite a senha de acesso...">
+    <button onclick="startHack()">ENTRAR NO SISTEMA</button>
+
+    <div class="progress-box" id="progressBox">
+      <p>Quebrando criptografia...</p>
+      <div class="progress">
+        <div class="bar" id="bar"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen hidden" id="accessScreen">
+    <h2>ACESSO CONCEDIDO</h2>
+
+    <div class="big">
+      PEDRINHO<br>
+      ARQUIVO CONFIDENCIAL ENCONTRADO
+    </div>
+
+    <button onclick="showSurprise()">ABRIR ANIVERSARIO_2026.exe</button>
+  </section>
+
+  <section class="screen hidden" id="surpriseScreen">
+    <h1>FELIZ ANIVERSÁRIO, PEDRINHO!</h1>
+
+    <p class="message">
+      Sistema analisado com sucesso.<br><br>
+      Resultado: você é oficialmente um irmão legal.
+      <br><br>
+      "Feliz aniversário! Fica tranquilo, a sua idade atual é apenas um número... um número bem alto e preocupante, mas ainda assim um número.
+      <br><br>
+      Com carinho, da sua irmã. <span class="heart">♥</span>
+    </p>
+
+    <div class="photo-area">
+      <div class="photo-card">
+        <img src="pedro2.jpg" alt="Foto nossa">
+      </div>
+
+      <div class="photo-card">
+        <img src="gif1.gif" alt="GIF engraçado">
+      </div>
+
+      <div class="photo-card">
+        <img src="pedro1.jpg" alt="Foto do aniversariante">
+      </div>
+
+      <div class="photo-card">
+        <img src="pedro3.jpg" alt="ksksks">
+      </div>
+
+      <div class="photo-card">
+        <img src="nos1.png" alt="ksksks">
+      </div>
+
+      <div class="photo-card">
+        <img src="pedro4.jpg" alt="ksksks">
+      </div>
+    </div>
+
+    <p class="message">
+      >>> birthday_protocol.exe finalizado com sucesso.
+    </p>
+  </section>
+
+  <script>
+    const terminal = document.getElementById("terminal");
+
+    const lines = [
+      "Inicializando sistema seguro...",
+      "Conectando ao servidor da família...",
+      "Procurando aniversariante...",
+      "Identidade localizada: PEDRINHO",
+      "Status: irmão mais velho",
+      "Nível de importância: 100%",
+      "Aguardando senha..."
+    ];
+
+    let line = 0;
+    let char = 0;
+
+    function typeText() {
+      if (line < lines.length) {
+        if (char < lines[line].length) {
+          terminal.innerHTML += lines[line].charAt(char);
+          char++;
+          setTimeout(typeText, 35);
+        } else {
+          terminal.innerHTML += "\n";
+          line++;
+          char = 0;
+          setTimeout(typeText, 300);
+        }
+      }
+    }
+
+    typeText();
+
+    function startHack() {
+      const progressBox = document.getElementById("progressBox");
+      const bar = document.getElementById("bar");
+
+      progressBox.style.display = "block";
+
+      let width = 0;
+
+      const loading = setInterval(() => {
+        width += Math.floor(Math.random() * 12) + 5;
+
+        if (width >= 100) {
+          width = 100;
+          clearInterval(loading);
+
+          setTimeout(() => {
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("accessScreen").classList.remove("hidden");
+          }, 500);
+        }
+
+        bar.style.width = width + "%";
+      }, 250);
+    }
+
+    function showSurprise() {
+      document.getElementById("accessScreen").classList.add("hidden");
+      document.getElementById("surpriseScreen").classList.remove("hidden");
+    }
+
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "01HAPPYBIRTHDAYPEDRINHO";
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = [];
+
+    for (let i = 0; i < columns; i++) {
+      drops[i] = Math.random() * canvas.height;
+    }
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#00ff88";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 70);
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
